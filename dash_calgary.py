@@ -73,7 +73,7 @@ def clean_and_convert(value):
 # %%
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
+server = app.server
 # Define the clean_and_convert function
 def clean_and_convert(value):
     try:
