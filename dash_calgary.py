@@ -10,6 +10,7 @@ from dash.exceptions import PreventUpdate
 import plotly.express as px
 import dash_bootstrap_components as dbc
 
+# %%
 # Reading and manipulating data
 calgary = pl.read_csv("calgary_income_by_CT.csv", skip_rows=8)
 calgary = calgary.with_columns(
@@ -21,7 +22,7 @@ calgary = calgary.with_columns(
 
 # Correct data selection and manipulation
 calgary = calgary.with_columns(pl.arange(0, pl.count()).over("CTNAME").alias("position"))
-
+# %%
 # Filter and prepare for join
 number_of_households = calgary.filter(pl.col("position") == 0).select([
     "CTNAME", "2021"
@@ -46,17 +47,21 @@ calgary_combined = calgary_combined.with_columns(
     (pl.lit("825") + pl.col('CTNAME')).alias("CTUID")
 ).to_pandas()
 
+
 calgary_combined['median_gross_income'] = calgary_combined['median_gross_income'].str.replace('[^\d,-]', '')
 calgary_combined['median_gross_income'] = pd.to_numeric(calgary_combined['median_gross_income'].str.replace(',', ''), errors='coerce').fillna(0).astype(int)
-# %%
+
 # Geodata manipulations
+
 geo_tract = gpd.read_file("shape_census.shp")
+
+
 calgary_combined = pd.merge(calgary_combined, geo_tract, on='CTUID', how='inner')
+
 gdf = gpd.GeoDataFrame(calgary_combined, geometry='geometry')
 gdf = gdf.to_crs(epsg=4326)
-gdf = gdf[gdf.is_valid]
 
-# %%
+
 
 def clean_and_convert(value):
     try:
@@ -68,7 +73,7 @@ def clean_and_convert(value):
 # %%
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-server = app.server
+
 # Define the clean_and_convert function
 def clean_and_convert(value):
     try:
