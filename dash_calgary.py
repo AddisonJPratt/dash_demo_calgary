@@ -48,7 +48,7 @@ calgary_combined = calgary_combined.with_columns(
 
 calgary_combined['median_gross_income'] = calgary_combined['median_gross_income'].str.replace('[^\d,-]', '')
 calgary_combined['median_gross_income'] = pd.to_numeric(calgary_combined['median_gross_income'].str.replace(',', ''), errors='coerce').fillna(0).astype(int)
-
+# %%
 # Geodata manipulations
 geo_tract = gpd.read_file("shape_census.shp")
 calgary_combined = pd.merge(calgary_combined, geo_tract, on='CTUID', how='inner')
@@ -56,6 +56,7 @@ gdf = gpd.GeoDataFrame(calgary_combined, geometry='geometry')
 gdf = gdf.to_crs(epsg=4326)
 gdf = gdf[gdf.is_valid]
 
+# %%
 
 def clean_and_convert(value):
     try:
